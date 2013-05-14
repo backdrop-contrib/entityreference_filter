@@ -11,6 +11,10 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
   function value_form(&$form, &$form_state) {
     parent::value_form($form, $form_state);
 
+    if (!empty($form_state['exposed'])) {
+      return;
+    }
+
     $displays = views_get_applicable_views('entityreference display');
     // Filter views that list the entity type we want, and group the separate
     // displays by view.
@@ -33,7 +37,7 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
       '#required' => TRUE,
       '#options' => $options,
       '#default_value' => $this->options['reference_display'],
-      '#weight' => -1000,
+      //'#weight' => -1000,
       '#description' => '<p>' .
         t('Choose the view and display that select the entities that can be referenced.<br />Only views with a display of type "Entity Reference" are eligible.') . '</p>',
     );
