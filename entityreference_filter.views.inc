@@ -6,8 +6,8 @@
 function entityreference_filter_views_data_alter(&$data) {
   foreach ($data as $table_name => $table_info) {
     foreach ($table_info as $field_name => $field_info) {
-      // Apply to entity reference fields only.
-      if (strpos($field_name, '_target_id') === FALSE) {
+      // Apply to entity reference and term reference fields only.
+      if ((strpos($field_name, '_target_id') === FALSE) && (strpos($field_name, '_tid') === FALSE)) {
         continue;
       }
       if (!empty($field_info['filter']['handler']) && $field_info['filter']['handler'] != 'entityreference_filter_view_result') {

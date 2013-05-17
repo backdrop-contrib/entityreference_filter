@@ -12,6 +12,15 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
     parent::value_form($form, $form_state);
 
     if (!empty($form_state['exposed'])) {
+      $values = $this->get_value_options();
+      if (empty($values)) {
+        // Hide the form element.
+        //TODO: add a configuration for this option.
+        if (isset($form['value'])) {
+          $form['value']['#prefix'] = '<div class="element-hidden">';
+          $form['value']['#suffix'] = '</div>';
+        }
+      }
       return;
     }
 
@@ -37,7 +46,6 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
       '#required' => TRUE,
       '#options' => $options,
       '#default_value' => $this->options['reference_display'],
-      //'#weight' => -1000,
       '#description' => '<p>' .
         t('Choose the view and display that select the entities that can be referenced.<br />Only views with a display of type "Entity Reference" are eligible.') . '</p>',
     );
@@ -49,7 +57,7 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
 
   function get_value_options() {
     if (isset($this->value_options)) {
-      return;
+      return $this->value_options;
     }
     $this->value_options = $this->get_configured_views_result();
     return $this->value_options;
