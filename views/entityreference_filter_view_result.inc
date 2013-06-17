@@ -12,6 +12,7 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
     parent::value_form($form, $form_state);
 
     if (!empty($form_state['exposed'])) {
+      // Run time.
       $values = $this->get_value_options();
       if (empty($values)) {
         // Hide the form element.
@@ -22,6 +23,10 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
         }
       }
       return;
+    }
+    else {
+      // Configuration via View UI time. Don't show value selection widget.
+      $form['value']['#access'] = FALSE;
     }
 
     $displays = views_get_applicable_views('entityreference display');
@@ -55,6 +60,10 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
     }
   }
 
+  function value_submit($form, &$form_state) {
+    $form_state['values']['options']['value'] = NULL;
+  }
+
   function get_value_options() {
     if (isset($this->value_options)) {
       return $this->value_options;
@@ -85,6 +94,18 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
       return $result;
     }
     return array();
+  }
+
+  function query() {
+    // Recalculate values if the filter is not exposed.
+    if (empty($this->options['exposed'])) {
+      $this->value = array_keys($this->get_configured_views_result());
+      if (empty($this->value)) {
+        // If the result is empty, add zero value item to ensure SQL validity.
+        $this->value = array(0);
+      }
+    }
+    parent::query();
   }
 
 }
