@@ -1,4 +1,4 @@
-name = Entityreference views filter
+name = Views Reference Filter
 description = Provides views-based filter for entity reference and entity id fields in views.
 core = 7.x
 package = Views
