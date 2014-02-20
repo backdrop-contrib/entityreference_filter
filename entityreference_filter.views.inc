@@ -12,7 +12,7 @@ function entityreference_filter_views_data_alter(&$data) {
       }
       if (!empty($field_info['filter']['handler']) && $field_info['filter']['handler'] != 'entityreference_filter_view_result') {
         $filter = $field_info;
-        $filter['title'] = (!empty($field_info['filter']['title']) ? $field_info['filter']['title'] : $field_info['title']) . ' (entityreference filter)';
+        $filter['title'] = (!empty($field_info['filter']['title']) ? $field_info['filter']['title'] : $field_info['title']) . ' (reference filter)';
         $filter['filter']['handler'] = 'entityreference_filter_view_result';
         $filter['filter']['proxy'] = $field_info['filter']['handler'];
         $filter['filter']['field'] = $field_name;
