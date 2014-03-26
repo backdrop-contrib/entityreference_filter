@@ -17,7 +17,7 @@ function entityreference_filter_views_data_alter(&$data) {
         $filter['filter']['proxy'] = $field_info['filter']['handler'];
         $filter['filter']['field'] = $field_name;
         // Organic Groups module uses non-standard fields.
-        if ($filter['filter']['table'] === 'og_membership') {
+        if ((isset($filter['filter']['table'])) && ($filter['filter']['table'] === 'og_membership')) {
           $filter['filter']['field'] = $field_info['filter']['field'];
         }
         unset($filter['argument'], $filter['field'], $filter['relationship'], $filter['sort'], $filter['filter']['title']);
