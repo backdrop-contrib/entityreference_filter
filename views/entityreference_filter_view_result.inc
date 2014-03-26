@@ -16,7 +16,7 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
       $values = $this->get_value_options();
       if (empty($values)) {
         // Hide the form element.
-        //TODO: add a configuration for this option.
+        // @todo Add a configuration for this option.
         if (isset($form['value'])) {
           $form['value']['#prefix'] = '<div class="element-hidden">';
           $form['value']['#suffix'] = '</div>';
@@ -34,10 +34,10 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
     // displays by view.
     $options = array();
     $field_base_table = '';
-    if (isset($this->definition['field_name'])) {
-      $field_name = $this->definition['field_name'];
-      //TODO set $field_base_table to the table of referenced entity.
-    }
+    // @todo Set $field_base_table to the table of referenced entity.
+    // if (isset($this->definition['field_name'])) {
+    //   $field_name = $this->definition['field_name'];
+    // }
     foreach ($displays as $data) {
       list($view, $display_name) = $data;
       if ((empty($field_base_table)) || ($view->base_table == $field_base_table)) {

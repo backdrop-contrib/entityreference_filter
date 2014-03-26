@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Implements hook_views_data_alter()
+ * Implements hook_views_data_alter().
  */
 function entityreference_filter_views_data_alter(&$data) {
   foreach ($data as $table_name => $table_info) {
