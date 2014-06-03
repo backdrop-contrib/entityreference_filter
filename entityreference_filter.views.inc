@@ -33,7 +33,7 @@ function entityreference_filter_views_data_alter(&$data) {
 function entityreference_filter_update_callback($view_name, $display_name, $controlling_filter) {
   $result = array('#type' => 'ajax', '#commands' => array());
 
-  if (empty($_GET['entityreference_filter_form_id'])) {
+  if (empty($_REQUEST['entityreference_filter_form_id'])) {
     return $result;
   }
   // Check that the view is valid and the display still exists.
@@ -82,11 +82,10 @@ function entityreference_filter_update_callback($view_name, $display_name, $cont
       $option_str .= '<option value="' . strip_tags($key) . '"' . $selected . '>' . strip_tags($choice) . '</option>';
     }
 
-    if ((empty($filter_handler->always_required)) && (empty($filter_handler->options['expose']['required']))
-        && (empty($filter_handler->options['expose']['multiple'])) && (empty($filter_handler->options['reference_select_first']))) {
+    if ((empty($filter_handler->always_required)) && (empty($filter_handler->options['expose']['required'])) && (empty($filter_handler->options['expose']['multiple']))) {
       $any_label = variable_get('views_exposed_filter_any_label', 'new_any') == 'old_any' ? t('<Any>') : t('- Any -');
 
-      // Get label defined in Better Exposed Filters.
+      // Get 'Any' option label defined in Better Exposed Filters.
       $exposed_form = $filter_handler->view->display_handler->get_plugin('exposed_form');
       if (method_exists($exposed_form, '_bef_get_settings')) {
         $bef_settings = $exposed_form->_bef_get_settings();
@@ -99,7 +98,7 @@ function entityreference_filter_update_callback($view_name, $display_name, $cont
     }
 
     $filter_name = $filter_handler->options['expose']['identifier'];
-    $selector = '#' . $_GET['entityreference_filter_form_id'] . ' [name="' . $filter_name . '"],[name="' . $filter_name . '[]"]';
+    $selector = '#' . $_REQUEST['entityreference_filter_form_id'] . ' [name="' . $filter_name . '"],[name="' . $filter_name . '[]"]';
     $command = ajax_command_html($selector, $option_str);
     $command['command'] = 'entityreference_filter_insertnowrap';
     $result['#commands'][] = $command;
