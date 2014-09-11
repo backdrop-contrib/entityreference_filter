@@ -166,7 +166,7 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
 
           if ($first_char === '[') {
             if (drupal_substr($arg, -1, 1) === ']') {
-              if (empty($filters_by_identifier)) {
+              if ((empty($filters_by_identifier)) && (!empty($this->view->filter))) {
                 foreach ($this->view->filter as $filter_handler) {
                   if (empty($filter_handler->options['exposed'])) {
                     continue;
