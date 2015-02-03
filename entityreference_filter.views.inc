@@ -6,8 +6,38 @@
 function entityreference_filter_views_data_alter(&$data) {
   foreach ($data as $table_name => $table_info) {
     foreach ($table_info as $field_name => $field_info) {
-      // Apply to entity reference and term reference fields only.
-      if ((strpos($field_name, '_target_id') === FALSE) && (strpos($field_name, '_tid') === FALSE) && ($field_name !== 'nid') && ($field_name !== 'tid') && ($field_name !== 'uid')) {
+      // Apply to entity reference and term reference fields,
+      // and node, term and user identifier fields only.
+      $base_table = NULL;
+      if ($field_name === 'nid') {
+        $base_table = 'node';
+      }
+      elseif ($field_name === 'uid') {
+        $base_table = 'users';
+      }
+      elseif ($field_name === 'tid') {
+        $base_table = 'taxonomy_term_data';
+      }
+      elseif (substr($field_name, -4) === '_tid') {
+        if (isset($field_info['filter']['field_name'])) {
+          $field = field_info_field($field_info['filter']['field_name']);
+          if ((!empty($field['type'])) && ($field['type'] === 'taxonomy_term_reference')) {
+            $base_table = 'taxonomy_term_data';
+          }
+        }
+      }
+      elseif (substr($field_name, -10) === '_target_id') {
+        if (isset($field_info['filter']['field_name'])) {
+          $field = field_info_field($field_info['filter']['field_name']);
+          if (!empty($field['settings']['target_type'])) {
+            $entity_info = entity_get_info($field['settings']['target_type']);
+            if (!empty($entity_info['base table'])) {
+              $base_table = $entity_info['base table'];
+            }
+          }
+        }
+      }
+      if (empty($base_table)) {
         continue;
       }
       if (!empty($field_info['filter']['handler']) && $field_info['filter']['handler'] != 'entityreference_filter_view_result') {
@@ -16,6 +46,7 @@ function entityreference_filter_views_data_alter(&$data) {
         $filter['filter']['handler'] = 'entityreference_filter_view_result';
         $filter['filter']['proxy'] = $field_info['filter']['handler'];
         $filter['filter']['field'] = $field_name;
+        $filter['filter']['filter_base_table'] = $base_table;
         // Organic Groups module uses non-standard fields.
         if ((isset($filter['filter']['table'])) && ($filter['filter']['table'] === 'og_membership')) {
           $filter['filter']['field'] = $field_info['filter']['field'];
