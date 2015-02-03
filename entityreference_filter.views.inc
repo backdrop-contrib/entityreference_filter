@@ -98,7 +98,8 @@ function entityreference_filter_update_callback($view_name, $display_name, $cont
     }
 
     $filter_name = $filter_handler->options['expose']['identifier'];
-    $selector = '#' . $_REQUEST['entityreference_filter_form_id'] . ' [name="' . $filter_name . '"],[name="' . $filter_name . '[]"]';
+    $form_id = $_REQUEST['entityreference_filter_form_id'];
+    $selector = '#' . $form_id . ' [name="' . $filter_name . '"],#' . $form_id . ' [name="' . $filter_name . '[]"]';
     $command = ajax_command_html($selector, $option_str);
     $command['command'] = 'entityreference_filter_insertnowrap';
     $result['#commands'][] = $command;
