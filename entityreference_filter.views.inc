@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Views Reference Filter views integration.
+ */
+
+/**
  * Implements hook_views_data_alter().
  */
 function entityreference_filter_views_data_alter(&$data) {

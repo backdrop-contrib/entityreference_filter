@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Views Reference Filter module hook implementations.
+ */
+
+/**
  * Implements hook_views_api().
  */
 function entityreference_filter_views_api() {
