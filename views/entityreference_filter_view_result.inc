@@ -131,6 +131,7 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
     $form['reference_arguments'] = array(
       '#type' => 'textfield',
       '#size' => 50,
+      '#maxlength' => 256,
       '#title' => t('Arguments for the view'),
       '#default_value' => isset($this->options['reference_arguments']) ? $this->options['reference_arguments'] : '',
       '#description' => t('Define arguments for the view that selects the entities. Empty value means passing arguments of the current view. Format is arg1/arg2/...argN. Possible arguments are !n - argument number n of the current view, [filter_name] - value of the named exposed filter, other strings are passed as is.'),
