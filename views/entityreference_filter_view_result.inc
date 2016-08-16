@@ -214,7 +214,8 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
 
     $filters_by_identifier = array();
 
-    $args = $this->view->args;
+    $args = $this->dynamic_filter_get_view_args();
+
     if (isset($this->options['reference_arguments'])) {
       $arg_str = trim($this->options['reference_arguments']);
       if (strlen($arg_str) > 0) {
