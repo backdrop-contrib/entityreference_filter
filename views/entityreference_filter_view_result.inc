@@ -293,6 +293,13 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
 
     $result = $view->execute_display($display_name, $args);
 
+    if (is_array($result)) {
+      // Clean entity reference style output.
+      foreach ($result as &$item) {
+        $item = trim($item);
+      }
+    }
+
     return $result ? $result : array();
   }
 
