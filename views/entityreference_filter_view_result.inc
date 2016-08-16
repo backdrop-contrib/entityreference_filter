@@ -15,6 +15,7 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
   function option_definition() {
     $options = parent::option_definition();
 
+    $options['value']['default'] = NULL;
     $options['reference_display'] = array('default' => '');
     $options['reference_arguments'] = array('default' => '');
     $options['expose']['contains']['hide_empty_filter'] = array('default' => TRUE, 'bool' => TRUE);
