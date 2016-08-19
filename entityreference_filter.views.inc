@@ -23,6 +23,9 @@ function entityreference_filter_views_data_alter(&$data) {
       elseif ($field_name === 'tid') {
         $base_table = 'taxonomy_term_data';
       }
+      elseif ($field_name === 'product_id') {
+        $base_table = 'commerce_product';
+      }
       elseif (substr($field_name, -4) === '_tid') {
         if (isset($field_info['filter']['field_name'])) {
           $field = field_info_field($field_info['filter']['field_name']);
