@@ -73,6 +73,7 @@ function entityreference_filter_update_callback($view_name, $display_name, $cont
     return $result;
   }
   // Check that the view is valid and the display still exists.
+  /** @var view $view */
   $view = views_get_view($view_name);
   if (!$view || !isset($view->display[$display_name]) || !$view->access($display_name)) {
     watchdog('entityreference', 'The view %view_name is no longer eligible for the filter.', array('%view_name' => $view_name), WATCHDOG_WARNING);
@@ -82,6 +83,11 @@ function entityreference_filter_update_callback($view_name, $display_name, $cont
 
   if (!$view->access(array($display_name))) {
     return $result;
+  }
+
+  if (!empty($_REQUEST['entityreference_filter_args'])) {
+    // Use the initial arguments of this view.
+    $view->set_arguments($_REQUEST['entityreference_filter_args']);
   }
 
   $view->build();
