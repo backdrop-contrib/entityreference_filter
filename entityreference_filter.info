@@ -1,4 +1,4 @@
-name = Views Reference Filter
+name = Entityreference Filter
 description = Provides views-based filter for entity reference and entity id fields in views.
 backdrop = 1.x
 type = module
