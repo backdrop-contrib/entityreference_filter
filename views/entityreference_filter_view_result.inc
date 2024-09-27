@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Definition of entityreference_filter_view_result.
@@ -12,18 +11,27 @@
  */
 class entityreference_filter_view_result extends views_handler_filter_in_operator {
 
-  function option_definition() {
+  /**
+   * {@inheritdoc}
+   */
+  public function option_definition() {
     $options = parent::option_definition();
 
     $options['value']['default'] = NULL;
     $options['reference_display'] = array('default' => '');
     $options['reference_arguments'] = array('default' => '');
-    $options['expose']['contains']['hide_empty_filter'] = array('default' => TRUE, 'bool' => TRUE);
+    $options['expose']['contains']['hide_empty_filter'] = array(
+      'default' => TRUE,
+      'bool' => TRUE,
+    );
 
     return $options;
   }
 
-  function value_form(&$form, &$form_state) {
+  /**
+   * {@inheritdoc}
+   */
+  public function value_form(&$form, &$form_state) {
     parent::value_form($form, $form_state);
 
     if (!empty($form_state['exposed'])) {
@@ -31,8 +39,8 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
       $identifier = $this->options['expose']['identifier'];
       if ((isset($this->options['reference_arguments'])) && (strpos($this->options['reference_arguments'], '[') !== FALSE)) {
         // This filter depends on other filters dynamically,
-        // store data for configuring Drupal.settings.
-        $form['#attached']['js'][] = drupal_get_path('module', 'entityreference_filter') . '/entityreference_filter.js';
+        // store data for configuring Backdrop.settings.
+        $form['#attached']['js'][] = backdrop_get_path('module', 'entityreference_filter') . '/entityreference_filter.js';
 
         if (empty($form['#after_build'])) {
           $form['#after_build'] = array();
@@ -137,11 +145,11 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
     );
   }
 
-  function value_submit($form, &$form_state) {
+  public function value_submit($form, &$form_state) {
     $form_state['values']['options']['value'] = NULL;
   }
 
-  function expose_form(&$form, &$form_state) {
+  public function expose_form(&$form, &$form_state) {
     parent::expose_form($form, $form_state);
 
     $form['expose']['hide_empty_filter'] = array(
@@ -152,7 +160,7 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
     );
   }
 
-  function exposed_info() {
+  public function exposed_info() {
     $info = parent::exposed_info();
 
     if (!empty($this->options['expose']['hide_empty_filter'])) {
@@ -165,7 +173,7 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
     return $info;
   }
 
-  function get_value_options() {
+  public function get_value_options() {
     if (isset($this->value_options)) {
       return $this->value_options;
     }
@@ -180,7 +188,7 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
     return $this->value_options;
   }
 
-  function query() {
+  public function query() {
     // Recalculate values if the filter is not exposed.
     if (empty($this->options['exposed'])) {
       $this->value = array_keys($this->get_configured_views_result());
@@ -193,7 +201,7 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
     parent::query();
   }
 
-  function get_configured_views_result() {
+  public function get_configured_views_result() {
     if (empty($this->options['reference_display'])) {
       return array();
     }
@@ -224,10 +232,10 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
         $args = explode('/', $arg_str);
         foreach ($args as $i => $arg) {
           $arg = trim($arg);
-          $first_char = drupal_substr($arg, 0, 1);
+          $first_char = backdrop_substr($arg, 0, 1);
 
           if ($first_char === '!') {
-            $arg_no = intval(drupal_substr($arg, 1)) - 1;
+            $arg_no = intval(backdrop_substr($arg, 1)) - 1;
             if ($arg_no >= 0) {
               $args[$i] = isset($this->view->args[$arg_no]) ? $this->view->args[$arg_no] : NULL;
               if ((is_null($args[$i])) && (!empty($this->view->argument))) {
@@ -240,7 +248,7 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
           }
 
           if ($first_char === '[') {
-            if (drupal_substr($arg, -1, 1) === ']') {
+            if (backdrop_substr($arg, -1, 1) === ']') {
               if ((empty($filters_by_identifier)) && (!empty($this->view->filter))) {
                 foreach ($this->view->filter as $filter_handler) {
                   if (empty($filter_handler->options['exposed'])) {
@@ -251,7 +259,7 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
               }
 
               $args[$i] = NULL;
-              $filter_name = drupal_substr($arg, 1, drupal_strlen($arg) - 2);
+              $filter_name = backdrop_substr($arg, 1, backdrop_strlen($arg) - 2);
               $input = $this->view->get_exposed_input();
               if (isset($input[$filter_name])) {
                 $args[$i] = $input[$filter_name];
@@ -304,7 +312,7 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
     return $result ? $result : array();
   }
 
-  function dynamic_filter_depends_on($filter_name) {
+  public function dynamic_filter_depends_on($filter_name) {
     if (isset($this->options['reference_arguments'])) {
       $filter_str = '[' . $filter_name . ']';
       $args = explode('/', trim($this->options['reference_arguments']));
@@ -316,7 +324,7 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
     return FALSE;
   }
 
-  function dynamic_filter_get_controlling_filters() {
+  public function dynamic_filter_get_controlling_filters() {
     $filters = array();
     if (isset($this->options['reference_arguments'])) {
       $arg_str = trim($this->options['reference_arguments']);
@@ -324,10 +332,10 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
         $args = explode('/', $arg_str);
         foreach ($args as $arg) {
           $arg = trim($arg);
-          $first_char = drupal_substr($arg, 0, 1);
+          $first_char = backdrop_substr($arg, 0, 1);
           if ($first_char === '[') {
-            if (drupal_substr($arg, -1, 1) === ']') {
-              $filter_name = drupal_substr($arg, 1, drupal_strlen($arg) - 2);
+            if (backdrop_substr($arg, -1, 1) === ']') {
+              $filter_name = backdrop_substr($arg, 1, backdrop_strlen($arg) - 2);
               $filters[] = $filter_name;
             }
           }
@@ -338,7 +346,7 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
     return $filters;
   }
 
-  function dynamic_filter_get_view_args() {
+  public function dynamic_filter_get_view_args() {
     $args = $this->view->args;
 
     if (empty($this->view->argument)) {
@@ -363,7 +371,7 @@ class entityreference_filter_view_result extends views_handler_filter_in_operato
     return $args;
   }
 
-  function is_auto_submit() {
+  public function is_auto_submit() {
     $exposed_form = $this->view->display_handler->get_plugin('exposed_form');
     return !empty($exposed_form->options['autosubmit']);
   }

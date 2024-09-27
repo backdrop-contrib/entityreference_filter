@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Views Reference Filter module hook implementations.
@@ -69,4 +68,13 @@ function entityreference_filter_exposed_form_after_build($form) {
   }
 
   return $form;
+}
+
+/**
+ * Implements hook_autoload_info().
+ */
+function entityreference_filter_autoload_info() {
+  return array(
+    'entityreference_filter_view_result' => 'views/entityreference_filter_view_result.inc',
+  );
 }

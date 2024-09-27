@@ -2,7 +2,7 @@
 
 "use strict";
 
-Drupal.behaviors.entityreference_filter_dynamic = {
+Backdrop.behaviors.entityreference_filter_dynamic = {
   attach: function (context, settings) {
     if (settings.entityreference_filter) {
       $.each(settings.entityreference_filter, function(form_id, filter_setting) {
@@ -33,7 +33,7 @@ Drupal.behaviors.entityreference_filter_dynamic = {
             var url = settings.basePath + settings.pathPrefix + 'entityreference_filter/update/' + view + '/' + controlling_filter;
 
             element.once('entityreference_filter').change(function() {
-              var ajax = new Drupal.ajax(false, false, {url: url});
+              var ajax = new Backdrop.ajax(false, false, {url: url});
               var parentBeforeSerialize = ajax.beforeSerialize;
               ajax.beforeSerialize = function(element, options) {
                 parentBeforeSerialize(element, options);
@@ -53,7 +53,7 @@ Drupal.behaviors.entityreference_filter_dynamic = {
               ajax.eventResponse(ajax, {});
             });
             // Another way.
-            //var ajax = new Drupal.ajax(false, element, {event: 'change', url: url});
+            //var ajax = new Backdrop.ajax(false, element, {event: 'change', url: url});
             //var parentBeforeSerialize = ajax.beforeSerialize;
             //ajax.beforeSerialize = function(element, options) {
             //  parentBeforeSerialize(element, options);
@@ -80,7 +80,7 @@ Drupal.behaviors.entityreference_filter_dynamic = {
 /**
  * Command to insert new content into the DOM without wrapping in extra DIV element.
  */
-Drupal.ajax.prototype.commands.entityreference_filter_insertnowrap = function (ajax, response, status) {
+Backdrop.ajax.prototype.commands.entityreference_filter_insertnowrap = function (ajax, response, status) {
   // Get information from the response. If it is not there, default to
   // our presets.
   var wrapper = response.selector ? $(response.selector) : $(ajax.wrapper);
@@ -103,8 +103,8 @@ Drupal.ajax.prototype.commands.entityreference_filter_insertnowrap = function (a
     case 'replaceAll':
     case 'empty':
     case 'remove':
-      settings = response.settings || ajax.settings || Drupal.settings;
-      Drupal.detachBehaviors(wrapper, settings);
+      settings = response.settings || ajax.settings || Backdrop.settings;
+      Backdrop.detachBehaviors(wrapper, settings);
       break;
   }
 
@@ -132,8 +132,8 @@ Drupal.ajax.prototype.commands.entityreference_filter_insertnowrap = function (a
   // optional.
   if (new_content.parents('html').length > 0) {
     // Apply any settings from the returned JSON if available.
-    settings = response.settings || ajax.settings || Drupal.settings;
-    Drupal.attachBehaviors(wrapper, settings);
+    settings = response.settings || ajax.settings || Backdrop.settings;
+    Backdrop.attachBehaviors(wrapper, settings);
   }
 };
 
