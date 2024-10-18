@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Views Reference Filter views integration.
@@ -7,58 +8,60 @@
 /**
  * Implements hook_views_data_alter().
  */
-foreach ($data as $table_name => $table_info) {
-  foreach ($table_info as $field_name => $field_info) {
-    // Apply to entity reference and term reference fields,
-    // and node, term and user identifier fields only.
-    $base_table = NULL;
-    if ($field_name === 'nid') {
-      $base_table = 'node';
-    }
-    elseif ($field_name === 'uid') {
-      $base_table = 'users';
-    }
-    elseif ($field_name === 'tid') {
-      $base_table = 'taxonomy_term_data';
-    }
-    elseif ($field_name === 'product_id') {
-      $base_table = 'commerce_product';
-    }
-    elseif (substr($field_name, -4) === '_tid') {
-      if (isset($field_info['filter']['field_name'])) {
-        $field = field_info_field($field_info['filter']['field_name']);
-        if ((!empty($field['type'])) && ($field['type'] === 'taxonomy_term_reference')) {
-          $base_table = 'taxonomy_term_data';
-        }
+function entityreference_filter_views_data_alter(&$data) {
+  foreach ($data as $table_name => $table_info) {
+    foreach ($table_info as $field_name => $field_info) {
+      // Apply to entity reference and term reference fields,
+      // and node, term and user identifier fields only.
+      $base_table = NULL;
+      if ($field_name === 'nid') {
+        $base_table = 'node';
       }
-    }
-    elseif (substr($field_name, -10) === '_target_id') {
-      if (isset($field_info['filter']['field_name'])) {
-        $field = field_info_field($field_info['filter']['field_name']);
-        if (!empty($field['settings']['target_type'])) {
-          $entity_info = entity_get_info($field['settings']['target_type']);
-          if (!empty($entity_info['base table'])) {
-            $base_table = $entity_info['base table'];
+      elseif ($field_name === 'uid') {
+        $base_table = 'users';
+      }
+      elseif ($field_name === 'tid') {
+        $base_table = 'taxonomy_term_data';
+      }
+      elseif ($field_name === 'product_id') {
+        $base_table = 'commerce_product';
+      }
+      elseif (substr($field_name, -4) === '_tid') {
+        if (isset($field_info['filter']['field_name'])) {
+          $field = field_info_field($field_info['filter']['field_name']);
+          if ((!empty($field['type'])) && ($field['type'] === 'taxonomy_term_reference')) {
+            $base_table = 'taxonomy_term_data';
           }
         }
       }
-    }
-    if (empty($base_table)) {
-      continue;
-    }
-    if (!empty($field_info['filter']['handler']) && $field_info['filter']['handler'] != 'entityreference_filter_view_result') {
-      $filter = $field_info;
-      $filter['title'] = (!empty($field_info['filter']['title']) ? $field_info['filter']['title'] : $field_info['title']) . ' (reference filter)';
-      $filter['filter']['handler'] = 'entityreference_filter_view_result';
-      $filter['filter']['proxy'] = $field_info['filter']['handler'];
-      $filter['filter']['field'] = $field_name;
-      $filter['filter']['filter_base_table'] = $base_table;
-      // Organic Groups module uses non-standard fields.
-      if ((isset($filter['filter']['table'])) && ($filter['filter']['table'] === 'og_membership')) {
-        $filter['filter']['field'] = $field_info['filter']['field'];
+      elseif (substr($field_name, -10) === '_target_id') {
+        if (isset($field_info['filter']['field_name'])) {
+          $field = field_info_field($field_info['filter']['field_name']);
+          if (!empty($field['settings']['target_type'])) {
+            $entity_info = entity_get_info($field['settings']['target_type']);
+            if (!empty($entity_info['base table'])) {
+              $base_table = $entity_info['base table'];
+            }
+          }
+        }
       }
-      unset($filter['argument'], $filter['field'], $filter['relationship'], $filter['sort'], $filter['filter']['title'], $filter['aliases']);
-      $data[$table_name][$field_name . '_entityreference_filter'] = $filter;
+      if (empty($base_table)) {
+        continue;
+      }
+      if (!empty($field_info['filter']['handler']) && $field_info['filter']['handler'] != 'entityreference_filter_view_result') {
+        $filter = $field_info;
+        $filter['title'] = (!empty($field_info['filter']['title']) ? $field_info['filter']['title'] : $field_info['title']) . ' (reference filter)';
+        $filter['filter']['handler'] = 'entityreference_filter_view_result';
+        $filter['filter']['proxy'] = $field_info['filter']['handler'];
+        $filter['filter']['field'] = $field_name;
+        $filter['filter']['filter_base_table'] = $base_table;
+        // Organic Groups module uses non-standard fields.
+        if ((isset($filter['filter']['table'])) && ($filter['filter']['table'] === 'og_membership')) {
+          $filter['filter']['field'] = $field_info['filter']['field'];
+        }
+        unset($filter['argument'], $filter['field'], $filter['relationship'], $filter['sort'], $filter['filter']['title'], $filter['aliases']);
+        $data[$table_name][$field_name . '_entityreference_filter'] = $filter;
+      }
     }
   }
 }
